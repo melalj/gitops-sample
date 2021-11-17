@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging-frontend
+  namespace: argocd
+  labels:
+    type: app
+spec:
+  syncPolicy:
+    automated:
+      selfHeal: true
+  project: myproject-staging
+  source:
+    repoURL: git@github.com:melalj/gitops-sample.git
+    targetRevision: HEAD
+    path: charts/app/myproject-frontend
+    helm:
+      releaseName: frontend
+      valueFiles:
+      - values-staging.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging

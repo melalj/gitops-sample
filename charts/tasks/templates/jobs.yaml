@@ -1,0 +1,86 @@
+{{- $root := . -}}
+{{- range $name, $data := .Values.jobs }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $name | quote }}
+spec:
+  {{- if $data.backoffLimit }}
+  backoffLimit: {{ $data.backoffLimit }}
+  {{- else }}
+  backoffLimit: 1
+  {{- end }}
+  template:
+    spec:
+      imagePullSecrets:
+        - name: dockerhub
+      {{- if $data.restartPolicy }}
+      restartPolicy: {{ $data.restartPolicy }}
+      {{- else }}
+      restartPolicy: Never
+      {{- end }}
+      containers:
+      - name: {{ $name }}
+        image: {{ $data.image }}
+        {{- if $data.args }}
+        args:
+          - {{ $data.args }}
+        {{- end }}
+        {{- if $data.cmd }}
+        args:
+          - /bin/sh
+          - -c
+          - {{ $data.cmd }}
+        {{- end }}
+        env:
+          {{- range $env, $val := $root.Values.env.downward }}
+          - name: {{ $env }}
+            valueFrom:
+              fieldRef:
+                fieldPath: {{ $val | quote }}
+          {{- end }}
+          {{- range $env, $val := $root.Values.env.normal }}
+          - name: {{ $env }}
+            value: {{ $val | quote }}
+          {{- end }}
+          {{- range $env, $val := $root.Values.env.secret }}
+          - name: {{ $env }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ (split "." $val)._0 | quote }}
+                key: {{ (split "." $val)._1 | quote }}
+          {{- end }}
+          {{- if $data.env }}
+          {{- if $data.env.downward }}
+          {{- range $env, $val := $data.env.downward }}
+          - name: {{ $env }}
+            valueFrom:
+              fieldRef:
+                fieldPath: {{ $val | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if $data.env.normal }}
+          {{- range $env, $val := $data.env.normal }}
+          - name: {{ $env }}
+            value: {{ $val | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if $data.env.secret }}
+          {{- range $env, $val := $data.env.secret }}
+          - name: {{ $env }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ (split "." $val)._0 | quote }}
+                key: {{ (split "." $val)._1 | quote }}
+          {{- end }}
+          {{- range $env, $val := $data.env.configmap }}
+          - name: {{ $env }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ $val }}
+                key: {{ $env }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+{{- end }}

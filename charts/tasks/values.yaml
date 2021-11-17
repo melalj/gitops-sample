@@ -1,0 +1,11 @@
+cronJobs: {}
+jobs: {}
+
+# Sync with /charts/app/_shared/values.yml
+env:
+  normal:
+    NODE_ENV: "production"
+    LOG_LEVEL: "info"
+  downward:
+    K8S_POD_NAME: "metadata.name"
+    K8S_POD_IP: "status.podIP"

@@ -1,0 +1,9 @@
+id_rsa*
+k3s/*
+.DS_Store
+charts/secrets/*
+!charts/secrets/.gitkeep
+env
+*_token
+id_*
+!.gitkeep

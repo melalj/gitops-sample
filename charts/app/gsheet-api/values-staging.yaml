@@ -1,0 +1,8 @@
+image:
+  repository: melalj/gsheet-api
+  tag: "1.1.2"
+
+deployment:
+  env:
+    normal:
+      PROJECT_ENV: "staging"

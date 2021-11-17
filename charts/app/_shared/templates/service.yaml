@@ -1,0 +1,39 @@
+{{- if or .Values.service.port .Values.service.ports }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "base.fullname" . }}
+  annotations:
+    {{- if .Values.service.hostname }}
+    load-balancer.hetzner.cloud/hostname: {{ .Values.service.hostname }}
+    {{- end }}
+    {{- if .Values.service.name }}
+    load-balancer.hetzner.cloud/name: {{ .Values.service.name }}
+    {{- end }}
+    load-balancer.hetzner.cloud/http-redirect-https: "false"
+    load-balancer.hetzner.cloud/location: fsn1
+    load-balancer.hetzner.cloud/use-private-ip: "true"
+  labels:
+    {{- include "base.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.ports }}
+  {{- with .Values.service.ports }}
+  ports:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.service.port }}
+  ports:
+    - port: {{ .Values.service.port }}
+      {{- if .Values.containerPort }}
+      targetPort: {{ .Values.containerPort }}
+      {{- else }}
+      targetPort: {{ .Values.service.port }}
+      {{- end }}
+      protocol: TCP
+      name: http
+  {{- end }}
+  selector:
+    {{- include "base.selectorLabels" . | nindent 4 }}
+{{- end }}

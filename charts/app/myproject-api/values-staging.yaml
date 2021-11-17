@@ -1,0 +1,11 @@
+image:
+  repository: tonoid/myproject-api
+  tag: "staging-382395d"
+
+containerPort: 80
+
+deployment:
+  env:
+    normal:
+      PROJECT_ENV: "production"
+      MY_VARIABLE: "1"

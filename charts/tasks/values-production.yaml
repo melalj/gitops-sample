@@ -1,0 +1,14 @@
+cronJobs:
+  cronjob-run-action:
+    schedule: "0 */6 * * *" # every 6 hours
+    image: tonoid/myproject-api:production-f173e9b
+    cmd: "node ./tasks/runAction.js"
+
+jobs:
+  job-run-action:
+    image: tonoid/myproject-api:production-f173e9b
+    cmd: "node ./tasks/runAction.js"
+
+env:
+  normal:
+    PROJECT_ENV: "production"

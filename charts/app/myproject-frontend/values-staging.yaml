@@ -1,0 +1,15 @@
+image:
+  repository: tonoid/myproject-frontend
+  tag: "staging-be3813d"
+
+containerPort: 80
+
+deployment:
+  env:
+    normal:
+      PROJECT_ENV: "staging"
+
+service:
+  type: LoadBalancer
+  hostname: "myproject-staging.tonoid.com" # change this to your domain name
+  name: "frontend-staging"

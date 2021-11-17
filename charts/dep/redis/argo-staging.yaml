@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging-redis
+  namespace: argocd
+  labels:
+    type: dep
+spec:
+  project: myproject-staging
+  source:
+    repoURL: git@github.com:melalj/gitops-sample.git
+    targetRevision: HEAD
+    path: charts/dep/redis
+    helm:
+      releaseName: redis
+      valueFiles:
+      - values-staging.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging

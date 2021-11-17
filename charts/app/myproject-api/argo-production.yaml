@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: production-api
+  namespace: argocd
+  labels:
+    type: app
+spec:
+  syncPolicy:
+    automated:
+      selfHeal: true
+  project: myproject-production
+  source:
+    repoURL: git@github.com:melalj/gitops-sample.git
+    targetRevision: HEAD
+    path: charts/app/myproject-api
+    helm:
+      releaseName: api
+      valueFiles:
+      - values-production.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production

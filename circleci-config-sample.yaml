@@ -1,0 +1,118 @@
+version: 2
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - build_test
+      - deploy:
+          requires:
+            - build_test
+          filters:
+            branches:
+              only:
+                - master
+                - staging
+
+jobs:
+  build_test:
+    docker:
+      - image: circleci/node:16.13
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run:
+          name: Test # Remove this section if you do not have tests
+          command: yarn test:all
+      - run:
+          name: Check linting # Remove this section if you do not have linting
+          command: yarn run lint
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  deploy:
+    docker:
+      - image: google/cloud-sdk:360.0.0-slim # TODO: Find a better image
+    steps:
+      - add_ssh_keys:
+            fingerprints:
+              - "eb:27:e9:00:a6:87:73:58:ff:af:e0:39:ea:e2:29:04" # EDIT this with the SSH key fingerprint from circleci seettings
+      - attach_workspace:
+          at: .
+      - run:
+          name: Update PATH and Define Environment Variable at Runtime
+          command: |
+            echo 'export REPO_NAME=${CIRCLE_PROJECT_REPONAME,,}' >> $BASH_ENV
+            if [ "$CIRCLE_BRANCH" = 'staging' ]; then
+              echo "export ENV=staging" >> $BASH_ENV
+              echo "export IMAGE_TAG=staging-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            else
+              echo 'export ENV=production' >> $BASH_ENV
+              echo "export IMAGE_TAG=production-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            fi
+            source $BASH_ENV
+      - run:
+          name: Check required environment variables
+          command: |
+            required_env=(
+              "DOCKERHUB_USERNAME"
+              "DOCKERHUB_PASSWORD"
+              "GITOPS_REPO"
+              "GITOPS_REPO_OWNER"
+              "ENV"
+              "IMAGE_TAG"
+            )
+            for var in "${required_env[@]}"
+            do
+              if [ -v $var ]; then
+                echo "Found ${var}"
+              else
+                echo "${var} is not set as environement variable in your CI project"
+                exit 1
+              fi
+            done
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+          name: Login to docker hub
+          command: echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      - run:
+          name: Build Docker image
+          command: docker build -t $DOCKERHUB_USERNAME/${REPO_PREFIX}$REPO_NAME:$IMAGE_TAG .
+      - run:
+          name: Tag Docker image
+          command: docker tag $DOCKERHUB_USERNAME/${REPO_PREFIX}$REPO_NAME:$IMAGE_TAG $DOCKERHUB_USERNAME/${REPO_PREFIX}$REPO_NAME:$IMAGE_TAG
+      - run:
+          name: Push image $IMAGE_TAG to docker registry
+          command: docker push $DOCKERHUB_USERNAME/${REPO_PREFIX}$REPO_NAME:$IMAGE_TAG
+      - run:
+          name: Update infra repo
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            ssh-add -D
+            ssh-add ~/.ssh/id_rsa_eb27e900a6877358ffafe039eae22904 # EDIT this with the SSH key fingerprint from circleci seettings (without columns)
+            git clone git@github.com:$GITOPS_REPO_OWNER/$GITOPS_REPO.git
+            cd $GITOPS_REPO
+            git config user.email "git@circleci.com"
+            git config user.name "CircleCI"
+            sed -i -e "s|tag:.*|tag: \"$IMAGE_TAG\" # $(date -u +'%Y-%m-%dT%H:%M:%SZ') $CIRCLE_BUILD_URL|" ./charts/app/${REPO_NAME}/values-$ENV.yaml
+            sed -i -e "s|$REPO_NAME:$ENV-.*|$REPO_NAME:$IMAGE_TAG # $(date -u +'%Y-%m-%dT%H:%M:%SZ') $CIRCLE_BUILD_URL|" ./charts/tasks/values-$ENV.yaml
+            cat ./charts/app/${REPO_NAME}/values-$ENV.yaml
+            git add -f ./charts/app/${REPO_NAME}/values-$ENV.yaml
+            git add -f ./charts/tasks/values-$ENV.yaml
+            git commit -m "CircleCI update $IMAGE_TAG"
+            git push -u origin master

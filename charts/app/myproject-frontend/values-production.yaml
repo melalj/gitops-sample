@@ -1,0 +1,17 @@
+image:
+  repository: tonoid/myproject-frontend
+  tag: "production-d820ab3"
+
+containerPort: 80
+
+replicaCount: 1
+
+deployment:
+  env:
+    normal:
+      PROJECT_ENV: "production"
+
+service:
+  type: LoadBalancer
+  hostname: "myproject.tonoid.com" # change this to your domain name
+  name: "frontend-production"

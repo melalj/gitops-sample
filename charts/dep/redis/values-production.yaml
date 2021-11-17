@@ -1,0 +1,5 @@
+auth:
+  password: redis-myproject-password
+
+replica:
+  replicaCount: 1

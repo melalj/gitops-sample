@@ -1,0 +1,6 @@
+cronJobs: {}
+jobs: {}
+
+env:
+  normal:
+    PROJECT_ENV: "staging"
