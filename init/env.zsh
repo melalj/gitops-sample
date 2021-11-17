@@ -11,14 +11,14 @@ GIT_REPOS=(
 
 DOCKERHUB_USERNAME=`cat id_dockerhub_username` # Add the proper value on /init/id_dockerhub_username
 DOCKERHUB_PASSWORD=`cat id_dockerhub_password` # Add the proper value on /init/id_dockerhub_username
-GITOPS_REPO="melalj" # Edit this based on your setup
-GITOPS_REPO_OWNER="gitops-sample" # Edit this based on your setup
+GITOPS_REPO_OWNER="melalj" # Edit this based on your setup
+GITOPS_REPO="gitops-sample" # Edit this based on your setup
 
 ENV_VARS=(
   "DOCKERHUB_USERNAME"
   "DOCKERHUB_PASSWORD"
-  "GITOPS_REPO"
   "GITOPS_REPO_OWNER"
+  "GITOPS_REPO"
 )
 
 for GIT_REPO in "${GIT_REPOS[@]}"
