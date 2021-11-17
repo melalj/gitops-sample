@@ -1,6 +1,6 @@
 image:
   repository: tonoid/myproject-api
-  tag: "production-382395d"
+  tag: "production-9345ed7" # 2021-11-17T16:21:19Z https://circleci.com/gh/melalj/myproject-api/5
 
 containerPort: 80
 
