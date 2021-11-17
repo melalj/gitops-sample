@@ -22,7 +22,6 @@ kubectl apply -f ./charts/projects/argocd-production.yaml -n argocd
 kubectl apply -f ./charts/projects/argocd-staging.yaml -n argocd
 echo "Added all argo projects!"
 
-s
 #####
 echo "Adding namespace..."
 #####
