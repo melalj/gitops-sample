@@ -1,12 +1,12 @@
 cronJobs:
   cronjob-run-action:
     schedule: "0 */6 * * *" # every 6 hours
-    image: tonoid/myproject-api:production-6462afc # 2021-11-17T17:00:54Z https://circleci.com/gh/melalj/myproject-api/9
+    image: tonoid/myproject-api:production-d9302eb # 2021-11-17T17:07:12Z https://circleci.com/gh/melalj/myproject-api/14
     cmd: "node ./tasks/runAction.js"
 
 jobs:
   job-run-action:
-    image: tonoid/myproject-api:production-6462afc # 2021-11-17T17:00:54Z https://circleci.com/gh/melalj/myproject-api/9
+    image: tonoid/myproject-api:production-d9302eb # 2021-11-17T17:07:12Z https://circleci.com/gh/melalj/myproject-api/14
     cmd: "node ./tasks/runAction.js"
 
 env:
