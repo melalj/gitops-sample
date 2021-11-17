@@ -8,8 +8,8 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   repositories: |
-    - name: my-test-repo
-      url: ssh://git@github.com:melalj/gitops-sample.git # change this to your gitops repo
+    - name: gitops-sample
+      url: git@github.com:melalj/gitops-sample.git # change this to your gitops repo
       type: git
       insecure: true 
       insecureIgnoreHostKey: true

@@ -20,6 +20,7 @@ deployment:
       EXPRESS_PORT: "80"
     secret:
       MY_SECRET_VAR: "app.MY_SECRET_VAR"
+      REDIS_URL: "app.REDIS_URL"
     downward:
       K8S_POD_NAME: "metadata.name"
       K8S_POD_IP: "status.podIP"
