@@ -18,8 +18,8 @@ secret_list=(
 #####
 echo "Adding argo projects..."
 #####
-kubectl apply -f ./argocd-production.yaml -n argocd
-kubectl apply -f ./argocd-staging.yaml -n argocd
+kubectl apply -f ./charts/projects/argocd-production.yaml -n argocd
+kubectl apply -f ./charts/projects/argocd-staging.yaml -n argocd
 echo "Added all argo projects!"
 
 s
@@ -34,9 +34,9 @@ echo "Added all namespaces!"
 #####
 echo "Adding secrets..."
 #####
-DOCKERHUB_EMAIL=`cat id_dockerhub_email` # EDIT THIS
-DOCKERHUB_USERNAME=`cat id_dockerhub_username` # EDIT THIS
-DOCKERHUB_PASSWORD=`cat id_dockerhub_password` # EDIT THIS
+DOCKERHUB_EMAIL=`cat ./init/id_dockerhub_email` # EDIT THIS
+DOCKERHUB_USERNAME=`cat ./init/id_dockerhub_username` # EDIT THIS
+DOCKERHUB_PASSWORD=`cat ./init/id_dockerhub_password` # EDIT THIS
 
 kubectl create secret docker-registry dockerhub -n production --docker-username=$DOCKERHUB_USERNAME --docker-password=$DOCKERHUB_PASSWORD --docker-email=$DOCKERHUB_EMAIL
 kubectl create secret docker-registry dockerhub -n staging --docker-username=$DOCKERHUB_USERNAME --docker-password=$DOCKERHUB_PASSWORD --docker-email=$DOCKERHUB_EMAIL
@@ -44,7 +44,7 @@ kubectl create secret docker-registry dockerhub -n staging --docker-username=$DO
 for value in "${secret_list[@]}"
 do
   echo " [$value]"
-  kubectl apply -f ../charts/secrets/$value.yaml
+  kubectl apply -f ./charts/secrets/$value.yaml
 done
 echo "Added all secrets!"
 
@@ -55,8 +55,8 @@ echo "Adding dependencies to Argo..."
 for value in "${dep_list[@]}"
 do
   echo " [$value]"
-  kubectl apply -f ../charts/dep/$value/argo-staging.yaml
-  kubectl apply -f ../charts/dep/$value/argo-production.yaml
+  kubectl apply -f ./charts/dep/$value/argo-staging.yaml
+  kubectl apply -f ./charts/dep/$value/argo-production.yaml
 done
 echo "Added all dependencies to Argo!"
 
@@ -66,8 +66,8 @@ echo "Adding app services to Argo..."
 for value in "${app_list[@]}"
 do
 echo " [$value]"
-  kubectl apply -f ../charts/app/$value/argo-production.yaml
-  kubectl apply -f ../charts/app/$value/argo-staging.yaml
+  kubectl apply -f ./charts/app/$value/argo-production.yaml
+  kubectl apply -f ./charts/app/$value/argo-staging.yaml
 done
 echo "Added all app services to Argo!"
 
@@ -75,6 +75,6 @@ echo "Added all app services to Argo!"
 echo "Adding app tasks to Argo..."
 #####
 echo "[$value]"
-kubectl apply -f ../charts/tasks/argo-production.yaml
-kubectl apply -f ../charts/tasks/argo-staging.yaml
+kubectl apply -f ./charts/tasks/argo-production.yaml
+kubectl apply -f ./charts/tasks/argo-staging.yaml
 echo "Added all app tasks to Argo!"
