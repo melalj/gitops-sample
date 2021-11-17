@@ -6,6 +6,9 @@ metadata:
   labels:
     type: dep
 spec:
+  syncPolicy:
+    automated:
+      selfHeal: true
   project: myproject-staging
   source:
     repoURL: git@github.com:melalj/gitops-sample.git
