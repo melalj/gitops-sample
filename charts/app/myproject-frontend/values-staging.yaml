@@ -11,5 +11,4 @@ deployment:
 
 service:
   type: LoadBalancer
-  hostname: "myproject-staging.tonoid.com" # change this to your domain name
   name: "frontend-staging"
