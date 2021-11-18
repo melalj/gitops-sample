@@ -1,6 +1,6 @@
 image:
   repository: tonoid/myproject-frontend
-  tag: "staging-a1268fb" # 2021-11-17T21:49:54Z https://circleci.com/gh/melalj/myproject-frontend/16
+  tag: "staging-2e4a94e" # 2021-11-18T10:49:57Z https://circleci.com/gh/melalj/myproject-frontend/22
 
 containerPort: 80
 
