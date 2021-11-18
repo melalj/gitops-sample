@@ -1,5 +1,7 @@
 # GitOps boilerplate
 
+[Full tutorial is available here.](https://www.tonoid.com/blog/gitops-ci-cd-circleci-argocd-kubernetes)
+
 ## Ingredients
 
 - Docker
@@ -21,7 +23,3 @@
 ### Tasks
 
 - Background tasks (cronJobs, jobs).
-
-### Getting started
-
-WIP
