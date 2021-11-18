@@ -1,6 +1,6 @@
 image:
   repository: tonoid/myproject-frontend
-  tag: "production-f3ef092" # 2021-11-18T11:32:49Z https://circleci.com/gh/melalj/myproject-frontend/29
+  tag: "production-473ba07" # 2021-11-18T15:26:50Z https://circleci.com/gh/melalj/myproject-frontend/33
 
 containerPort: 80
 
