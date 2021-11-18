@@ -4,10 +4,7 @@ cronJobs:
     image: tonoid/myproject-api:production-e3d2ae5 # 2021-11-18T11:01:50Z https://circleci.com/gh/melalj/myproject-api/21
     cmd: "node ./tasks/runAction.js"
 
-jobs:
-  job-run-action:
-    image: tonoid/myproject-api:production-e3d2ae5 # 2021-11-18T11:01:50Z https://circleci.com/gh/melalj/myproject-api/21
-    cmd: "node ./tasks/runAction.js"
+jobs: {}
 
 env:
   normal:
