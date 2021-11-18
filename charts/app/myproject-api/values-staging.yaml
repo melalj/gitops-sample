@@ -1,6 +1,6 @@
 image:
   repository: tonoid/myproject-api
-  tag: "staging-e3d2ae5" # 2021-11-18T11:14:56Z https://circleci.com/gh/melalj/myproject-api/23
+  tag: "staging-5a451eb" # 2021-11-18T11:27:24Z https://circleci.com/gh/melalj/myproject-api/27
 
 containerPort: 80
 
